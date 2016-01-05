@@ -52,7 +52,7 @@ if (Meteor.isClient) {
         subject: subject.value,
         created_at: new Date,
         is_done: false,
-        user_id: Meteor.user_id()
+        user_id: Meteor.userId()
       });
       //tmpl.find('input').value = 'Create new todo....';
       //subject.value = 'Create new todo...';
@@ -65,4 +65,15 @@ if (Meteor.isServer) {
   Meteor.publish('todos',function () {
     return Todos.find({user_id: this.userId});
   });
+  Todos.allow({
+    insert: function (userId, doc) {
+      return userId;
+    },
+    update: function (userId, doc, fieldNames, modifier) {
+      return doc.user_id === userId;
+    },
+    remove: function (userId, doc) {
+      return doc.user_id === userId;
+    }
+  })
 }
